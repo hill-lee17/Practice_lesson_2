@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>内容识别和管控系统</title>
+<meta name="keywords"  content="设置关键词..." />
+<meta name="description" content="设置描述..." />
+<meta name="author" content="DeathGhost" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<link rel="icon" href="../static/images/icon/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/javascript/jquery.js"></script>
+<script src="../static/javascript/plug-ins/customScrollbar.min.js"></script>
+<script src="../static/javascript/plug-ins/echarts.min.js"></script>
+<script src="../static/javascript/plug-ins/layerUi/layer.js"></script>
+<script src="../static/editor/ueditor.config.js"></script>
+<script src="../static/editor/ueditor.all.js"></script>
+<script src="../static/javascript/plug-ins/pagination.js"></script>
+<script src="../static/javascript/public.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="main-wrap">
+	<div class="side-nav">
+		<div class="side-logo">
+			<div class="logo">
+				<span class="logo-ico">
+					<i class="i-l-1"></i>
+					<i class="i-l-2"></i>
+					<i class="i-l-3"></i>
+				</span>
+				<strong>内容识别和管控系统</strong>
+			</div>
+		</div>
+		
+		<nav class="side-menu content mCustomScrollbar" data-mcs-theme="minimal-dark">
+			<h2>
+				<a href="/index" class="InitialPage"><i class="icon-dashboard"></i>系统主页</a>
+			</h2>
+			<ul>
+				<li>
+					<dl>
+						<dt>
+							<i class="icon-bar-chart"></i>微博热搜<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/hot_search">查看热搜</a>
+						</dd>
+					</dl>
+				</li>
+				<li>
+					<dl>
+						<dt>
+							<i class="icon-leaf"></i>用户内容识别<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/get_user_info">用户爬虫和分析</a>
+						</dd>
+					</dl>
+				</li>
+				<li>
+					<dl>
+						<dt>
+							<i class="icon-fighter-jet"></i>管控功能<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/send">发送水军微博</a>
+						</dd>
+						<dd>
+							<a href="/comment">发送水军评论</a>
+						</dd>
+					</dl>
+				</li>
+			</ul>
+		</nav>
+		<footer class="side-footer">© 2024.10</footer>
+		
+	</div>
+	<div class="content-wrap">
+		<header class="top-hd">
+			<div class="hd-lt">
+				<a class="icon-reorder"></a>
+			</div>
+			<div class="hd-rt">
+				<ul>
+					<li>
+						<a><i class="icon-user"></i>管理员:<em id="login_name">default</em></a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" id="logoutButton"><i class="icon-signout"></i>安全退出</a>
+					</li>
+				</ul>
+			</div>
+		</header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">用户内容识别</h2>
+						<p class="title-description">
+							输入用户id即可自动爬取用户微博和图片,通过算法计算用户关键词，从而实现用户分类。此外还通过机器学习实现了违规图片的检测
+						</p>
+					</header>
+					<hr>
+				</section>
+				<div class="form-group-col-2">
+					<div class="form-label">输入用户id：</div>
+					<div class="form-cont">
+						<input type="tel" placeholder="用户id..." class="form-control form-boxed" style="width:300px;" id="user_id">
+						<button class="btn btn-primary-outline" id="start">开始爬取</button>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-bd">
+						<div class="panel panel-default">
+							<div class="panel-hd">用户信息</div>
+							<div class="panel-bd" id="userInfoPanel">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-bd">
+						<button class="btn btn-info" id="analyse">分析用户</button>
+						<input type="file" id="imageUpload" style="display: none;" />
+                <button class="btn btn-info" id="pic_detec" style="margin-left: 20px;">选择图片</button>
+						<button class="btn btn-info" id="detect" style="margin-left: 20px;">违规图片检测</button>
+						<p id="filePath"></p>
+						<div id="detectionResult"></div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-bd">
+						<div class="panel panel-secondary">
+							<div class="panel-hd">爬虫信息</div>
+							<div class="panel-bd" id="spider_info">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer class="btm-ft">
+			<p class="clear">
+				<span class="fl">©<a href="#" title="DeathGhost" target="_blank">2024.10</a></span>
+			</p>
+		</footer>
+	</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+		$('#logoutButton').click(function() {
+			$.ajax({
+				url: '/logout',  // Flask后端路由，用于处理退出登录
+				type: 'POST',
+				success: function(response) {
+				// 重定向到登录页面或主页
+				window.location.href = '/login'; // 或者您希望重定向的任何页面
+					},
+					error: function() {
+				alert('退出登录失败');
+				}
+			});
+		});
+        $('#start').click(function(event) {
+			var index = layer.load(0, {shade: false}); // 0代表加载的风格，支持0-2
+            event.preventDefault();  // 阻止表单默认提交行为
+            var userId = $('#user_id').val();
+            if (userId) {
+                $.ajax({
+                    url: '/get_user_info',
+                    type: 'POST',
+                    data: {
+                        id: userId
+                    },
+                    dataType: 'json',  // 期望的响应数据类型
+                    success: function(response) {
+                        if (response && Object.keys(response).length !== 0) {
+							layer.close(index); // 关闭加载动画
+                            var userInfo = response;
+                            $('#userInfoPanel').html(
+                                '微博昵称：' + (userInfo.name ? userInfo.name : '未定义') + '<br>' +
+                                '微博主页地址：' + (userInfo.profile_url ? '<a href="' + userInfo.profile_url + '" target="_blank">' + userInfo.profile_url + '</a>' : '未定义') + '<br>' +
+                                '是否认证：' + (userInfo.verified) + '<br>' +
+                                '微博说明：' + (userInfo.description ? userInfo.description : '未定义') + '<br>' +
+                                '关注人数：' + (userInfo.guanzhu ? userInfo.guanzhu : '未定义') + '<br>' +
+                                '粉丝数：' + (userInfo.fensi ? userInfo.fensi : '未定义') + '<br>' +
+                                '性别：' + (userInfo.gender ? userInfo.gender : '未定义') + '<br>' +
+                                '微博等级：' + (userInfo.urank) + '<br>'
+                            );
+							// 当文档加载完成后，获取文本文件的内容
+							$.get('/get_spider_info', function(data) {
+                			// 将内容设置到指定的div容器中
+                			$('#spider_info').html(data);
+           			 		})
+            				.fail(function() {
+               				 console.log("Error loading the file.");
+            				});
+                        } else {
+                            alert('未获取到用户信息');
+                        }
+                    },
+                    error: function() {
+                        alert('获取用户信息失败');
+                    }
+                });
+            } else {
+                alert('请输入微博ID');
+            }
+        });
+    });
+</script>
+<script>
+$(document).ready(function() {
+    $('#analyse').click(function() {
+        $.ajax({
+            url: '/get_keywords',  // Flask后端路由
+            type: 'GET',
+            success: function(response) {
+                // 将后端返回的关键词显示在Layer.tab中
+                var total = response.total;
+                var get_cnt = response.get_cnt;
+                var keywords_top1 = response.keywords_top1.join(', ');
+                layer.tab({
+                    area: ['600px', '300px'],
+                    tab: [{
+                        title: '用户关键词', 
+                        content:  '从' + total + '中取出' + get_cnt + '个词<br>关键词topk：' + keywords_top1
+                    }]
+                });
+            },
+            error: function() {
+                alert('获取关键词失败');
+            }
+        });
+    });
+});
+</script>
+<script>
+	 $('#pic_detec').click(function() {
+                $('#imageUpload').click(); // 触发点击事件，打开文件选择对话框
+            });
+
+            $('#imageUpload').change(function() {
+                const filePath = $(this).val();
+                $('#filePath').text('选中的文件路径: ' + filePath);
+            });
+
+            $('#detect').click(function() {
+                var formData = new FormData();
+                var fileInput = document.getElementById('imageUpload');
+                formData.append('image', fileInput.files[0]);
+			var index = layer.load(0, {shade: false}); // 0代表加载的风格，支持0-2
+			$.ajax({
+				url: '/detect',  // Flask后端路由
+				type: 'POST',
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function(response) {
+					layer.close(index); // 关闭加载动画
+					var results = response.result;
+					if(results.toString() === "false"){
+						layer.alert('检测结果: 正常图片<br>' + response.inspect)
+					}
+					else{
+						layer.alert('检测结果: 违规图片<br>' + response.inspect)
+					}
+				},
+				error: function() {
+					alert('检测失败');
+				}
+			});
+		});
+	
+		$('#imageUpload').change(function() {
+			const filePath = $(this).val();
+			$('#filePath').text('选中的文件路径: ' + filePath);
+		});
+		$(function(){
+			$.ajax({
+			url: '/get_username',  // 获取用户名的后端路由
+			type: 'GET',
+			success: function(response) {
+				$('#login_name').text(response.loggedInUsername);
+			   }
+		});
+	});
+
+</script>
+</body>
+</html>
