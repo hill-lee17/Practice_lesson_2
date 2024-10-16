@@ -4,20 +4,20 @@
 
 ## 展示
 查看热搜：
-![alt text](./img/image.png)
+![alt text](./code/img/image.png)
 
 爬取用户（爬取前）：
-![alt text](./img/image-1.png)
+![alt text](./code/img/image-1.png)
 
 爬取用户（爬取后）：（默认爬取30条微博）
-![alt text](./img/3.png)
-![alt text](./img/4.png)
+![alt text](./code/img/3.png)
+![alt text](./code/img/4.png)
 
 分析用户关键词：
-![alt text](./img/5.png)
+![alt text](./code/img/5.png)
 
 选择图片后点击右侧违规图片检测：
-![alt text](./img/6.png)
+![alt text](./code/img/6.png)
 
 管控功能中发送微博和评论都会在微博中真实生效，这里不演示了
 
@@ -25,10 +25,10 @@
 前端为HTML三件套，后端采用py3.10，后端框架Flask，没安包的直接安就行。
 运行app.py即可
 此外需要修改数据库和绝对路径：
-![alt text](./img/7.png)
-![alt text](./img/8.png)
-![alt text](./img/9.png)
-![alt text](./img/10.png)
+![alt text](./code/img/7.png)
+![alt text](./code/img/8.png)
+![alt text](./code/img/9.png)
+![alt text](./code/img/10.png)
 
 ## 说明
 管控功能中的发微博和评论建议还是调用微博官方API实现,详见：
